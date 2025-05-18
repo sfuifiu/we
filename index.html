@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CET Cutoff Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    select, button {
+      padding: 8px;
+      margin: 8px 0;
+      width: 300px;
+      font-size: 16px;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>CET Cutoff Analyser</h2>
+
+  <label for="college">College:</label><br />
+  <select id="college"></select><br />
+
+  <label for="department">Department:</label><br />
+  <select id="department"></select><br />
+
+  <label for="category">Category:</label><br />
+  <select id="category"></select><br />
+
+  <button onclick="showCutoff()">Get Cutoff</button>
+
+  <div id="result"></div>
+
+  <script>
+
+    const cetData = [
+    { College: "UVCE Bangalore", Department: "AI", Category: "1G", Cutoff: 1036 },
+    { College: "UVCE Bangalore", Department: "Computer Science", Category: "GM", Cutoff: 1234 },
+    { College: "UVCE Bangalore", Department: "Computer Science", Category: "SC", Cutoff: 56 },
+      { College: "UVCE Bangalore", Department: "Information Science", Category: "GM", Cutoff: 1450 },
+     { College: "UVCE Bangalore", Department: "Electronics", Category: "GM", Cutoff: 1450 },
+     { College: "UVCE Bangalore", Department: "Information Science", Category: "GM", Cutoff: 1450 },
+      { College: "UVCE Bangalore", Department: "Computer Science", Category: "SC", Cutoff: 8421 },
+      { College: "BMSCE", Department: "Electronics", Category: "GM", Cutoff: 980 },
+      { College: "BMSCE", Department: "Computer Science", Category: "GM", Cutoff: 870 },
+       { College: "BMSCE", Department: "AI", Category: "1G", Cutoff: 1036 },
+        { College: "BMSCE", Department: "CY", Category: "3G", Cutoff: 5},
+        
+  { College: "UVCE Bangalore", Department: "AI", Category: "1G", Cutoff: 10362 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "2AG", Cutoff: 10866 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "2AR", Cutoff: 11476 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "2BG", Cutoff: 12715 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "3AG", Cutoff: 7157 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "3BG", Cutoff: 7979 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "GM", Cutoff: 6491 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "GMK", Cutoff: 8135 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "GMR", Cutoff: 9067 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "SCG", Cutoff: 27948 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "SCK", Cutoff: 36559 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "SCR", Cutoff: 37378 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "STG", Cutoff: 32536 },
+  { College: "UVCE Bangalore", Department: "AI", Category: "STR", Cutoff: 35989 },
+
+  { College: "UVCE Bangalore", Department: "AR", Category: "GM", Cutoff: 503 },
+
+  { College: "UVCE Bangalore", Department: "CE", Category: "1G", Cutoff: 98609 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "2AG", Cutoff: 84690 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "2AK", Cutoff: 94377 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "2AR", Cutoff: 113375 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "2BG", Cutoff: 135975 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "2BR", Cutoff: 161714 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "3AG", Cutoff: 73502 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "3AR", Cutoff: 84511 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "3BG", Cutoff: 84670 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "3BR", Cutoff: 102557 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "GM", Cutoff: 60289 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "GMK", Cutoff: 69405 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "GMR", Cutoff: 83713 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "SCG", Cutoff: 108968 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "SCK", Cutoff: 133225 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "SCR", Cutoff: 121681 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "STG", Cutoff: 108227 },
+  { College: "UVCE Bangalore", Department: "CE", Category: "STR", Cutoff: 139819 },
+
+  { College: "UVCE Bangalore", Department: "CS", Category: "1G", Cutoff: 7835 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "1R", Cutoff: 13146 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "2AG", Cutoff: 6831 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "2AK", Cutoff: 8846 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "2AR", Cutoff: 7538 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "2BG", Cutoff: 10578 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "2BR", Cutoff: 11860 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "3AG", Cutoff: 5476 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "3AR", Cutoff: 6547 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "3BG", Cutoff: 6057 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "3BR", Cutoff: 7918 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "GM", Cutoff: 4723 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "GMK", Cutoff: 7849 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "GMR", Cutoff: 6296 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "SCG", Cutoff: 22940 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "SCK", Cutoff: 26105 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "SCR", Cutoff: 32681 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "STG", Cutoff: 25405 },
+  { College: "UVCE Bangalore", Department: "CS", Category: "STR", Cutoff: 25565 },
+  
+
+  // Add similar entries for EC, EE, IE, ME if needed
+
+
+  
+  // Civil Engineering (CE)
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "1G", Cutoff: 137990 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "2AG", Cutoff: 139499 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "2AK", Cutoff: 171687 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "2AR", Cutoff: 155926 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "2BG", Cutoff: 132292 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "3AG", Cutoff: 121110 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "3BG", Cutoff: 131474 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "3BR", Cutoff: 148854 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "GM", Cutoff: 113709 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "GMK", Cutoff: 120451 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "GMR", Cutoff: 129080 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "SCG", Cutoff: 152109 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "SCK", Cutoff: 172977 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "SCR", Cutoff: 163686 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "STG", Cutoff: 159676 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CE", Category: "STR", Cutoff: 202164 },
+
+  // Computer Science (CS)
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "1G", Cutoff: 26747 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "1R", Cutoff: 32544 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "2AG", Cutoff: 26171 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "2AR", Cutoff: 31083 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "2BG", Cutoff: 30184 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "2BR", Cutoff: 39782 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "3AG", Cutoff: 20456 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "3AR", Cutoff: 23951 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "3BG", Cutoff: 23725 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "3BK", Cutoff: 26085 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "GM", Cutoff: 18691 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "GMK", Cutoff: 21675 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "GMR", Cutoff: 23297 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "SCG", Cutoff: 46373 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "SCR", Cutoff: 53473 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "CS", Category: "STG", Cutoff: 46082 },
+
+  // Electronics & Communication (EC)
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "1G", Cutoff: 40374 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "2AG", Cutoff: 42944 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "2AR", Cutoff: 43465 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "2BG", Cutoff: 53552 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "3AG", Cutoff: 40170 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "3BG", Cutoff: 36749 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "3BR", Cutoff: 42149 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "GM", Cutoff: 35440 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "GMK", Cutoff: 38497 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "GMR", Cutoff: 38469 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "SCG", Cutoff: 81197 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "SCR", Cutoff: 115444 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "STG", Cutoff: 79928 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "STK", Cutoff: 127055 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "EC", Category: "STR", Cutoff: 80136 },
+
+  // Silk Technology (ST)
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "1G", Cutoff: 168689 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "2AG", Cutoff: 172276 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "2AR", Cutoff: 208471 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "3BG", Cutoff: 174220 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "GM", Cutoff: 149116 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "GMK", Cutoff: 164811 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "GMR", Cutoff: 162370 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "SCG", Cutoff: 194350 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "ST", Category: "STG", Cutoff: 273387 },
+
+  // Textile Engineering (TX)
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "TX", Category: "1G", Cutoff: 210893 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "TX", Category: "2AG", Cutoff: 203411 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "TX", Category: "2AK", Cutoff: 207453 },
+  { College: "SKSJT Institute of Engineering, Bangalore", Department: "TX", Category: "2AR", Cutoff: 218194 },
+
+
+  
+  // Civil Engineering (CE)
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "1G", Cutoff: 58994 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "2AG", Cutoff: 64890 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "2AR", Cutoff: 71843 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "2BG", Cutoff: 73226 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "3AG", Cutoff: 38333 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "3BG", Cutoff: 41883 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "3BR", Cutoff: 65223 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "GM", Cutoff: 37896 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "GMK", Cutoff: 53895 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "GMR", Cutoff: 47288 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "SCG", Cutoff: 80462 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "SCR", Cutoff: 116159 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "STG", Cutoff: 94563 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "STK", Cutoff: 116868 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "CE", Category: "STR", Cutoff: 123121 },
+
+  // Electronics and Communication (EC)
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "1G", Cutoff: 8704 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "1R", Cutoff: 11264 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "2AG", Cutoff: 5913 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "2AR", Cutoff: 6916 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "2BG", Cutoff: 6731 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "3AG", Cutoff: 4170 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "3BG", Cutoff: 3485 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "3BK", Cutoff: 11984 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "GM", Cutoff: 2838 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "GMK", Cutoff: 7725 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "GMR", Cutoff: 6804 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "SCG", Cutoff: 25896 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "SCR", Cutoff: 35225 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "STG", Cutoff: 32837 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EC", Category: "STR", Cutoff: 58023 },
+
+  // Electrical Engineering (EE)
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "1G", Cutoff: 14853 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "1R", Cutoff: 49153 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "2AG", Cutoff: 18804 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "2AK", Cutoff: 32215 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "2AR", Cutoff: 23820 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "2BG", Cutoff: 26474 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "3AG", Cutoff: 10583 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "3BG", Cutoff: 16451 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "3BR", Cutoff: 19577 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "GM", Cutoff: 9150 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "GMK", Cutoff: 25985 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "GMR", Cutoff: 17158 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "SCG", Cutoff: 50740 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "SCK", Cutoff: 78200 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "SCR", Cutoff: 53189 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "EE", Category: "STK", Cutoff: 75397 },
+
+  // Industrial Engineering (IM)
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "1G", Cutoff: 74739 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "2AG", Cutoff: 66121 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "2AK", Cutoff: 71066 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "2AR", Cutoff: 70417 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "2BG", Cutoff: 45147 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "2BR", Cutoff: 67492 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "3AG", Cutoff: 42205 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "3AR", Cutoff: 76313 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "3BG", Cutoff: 54285 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "GM", Cutoff: 40082 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "GMK", Cutoff: 53636 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "GMR", Cutoff: 67038 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "SCG", Cutoff: 151846 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "SCK", Cutoff: 169918 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "SCR", Cutoff: 188344 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "IM", Category: "STG", Cutoff: 173421 },
+
+  // Mechanical Engineering (ME)
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "1G", Cutoff: 27614 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "2AG", Cutoff: 38952 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "2AR", Cutoff: 42973 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "2BG", Cutoff: 46818 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "3AG", Cutoff: 23435 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "3AK", Cutoff: 81676 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "3AR", Cutoff: 38686 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "3BG", Cutoff: 34678 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "GM", Cutoff: 21721 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "GMK", Cutoff: 47628 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "GMR", Cutoff: 32894 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "SCG", Cutoff: 87250 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "SCR", Cutoff: 124646 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "STG", Cutoff: 114054 },
+  { College: "BMS College of Engineering, Basavanagudi, Bangalore", Department: "ME", Category: "STR", Cutoff: 171095 },
+
+
+
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "1G", Cutoff: 25508 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "2AG", Cutoff: 23528 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "2AK", Cutoff: 52660 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "2AR", Cutoff: 75976 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "3AG", Cutoff: 8563 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "3BG", Cutoff: 14575 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "GM", Cutoff: 7376 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "GMR", Cutoff: 13770 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "SCG", Cutoff: 61329 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "SCR", Cutoff: 71685 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "BT", Category: "STG", Cutoff: 45191 },
+
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "1G", Cutoff: 1856 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "2AG", Cutoff: 2085 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "2AR", Cutoff: 2556 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "2BG", Cutoff: 2177 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "3AG", Cutoff: 1640 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "3BG", Cutoff: 1437 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "3BR", Cutoff: 2313 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "GM", Cutoff: 738 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "GMK", Cutoff: 2072 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "GMR", Cutoff: 1808 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "SCG", Cutoff: 9060 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "SCK", Cutoff: 22097 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "SCR", Cutoff: 19186 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "STG", Cutoff: 12978 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CA", Category: "STR", Cutoff: 21709 },
+
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "1G", Cutoff: 41722 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "2AG", Cutoff: 37759 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "2AR", Cutoff: 53256 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "2BG", Cutoff: 20085 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "3BG", Cutoff: 17427 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "3BK", Cutoff: 49255 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "GM", Cutoff: 15239 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "GMR", Cutoff: 27460 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "SCG", Cutoff: 34913 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "SCR", Cutoff: 42558 },
+  { College: "R. V. College of Engineering, Bangalore", Department: "CE", Category: "STG", Cutoff: 61968 },
+
+  // ... you can continue in the same structure for CH, CS, CY, DS, EC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ];
+
+
+
+
+
+
+    
+    const collegeSelect = document.getElementById("college");
+    const departmentSelect = document.getElementById("department");
+    const categorySelect = document.getElementById("category");
+
+    // Populate college dropdown
+    const colleges = [...new Set(cetData.map(item => item.College))];
+    colleges.forEach(college => {
+      const option = document.createElement("option");
+      option.value = college;
+      option.textContent = college;
+      collegeSelect.appendChild(option);
+    });
+
+    // Update departments based on selected college
+    collegeSelect.addEventListener("change", () => {
+      const selectedCollege = collegeSelect.value;
+      const departments = [
+        ...new Set(cetData
+          .filter(item => item.College === selectedCollege)
+          .map(item => item.Department))
+      ];
+
+      departmentSelect.innerHTML = "";
+      departments.forEach(dept => {
+        const option = document.createElement("option");
+        option.value = dept;
+        option.textContent = dept;
+        departmentSelect.appendChild(option);
+      });
+
+      // Trigger change to refresh category list
+      departmentSelect.dispatchEvent(new Event("change"));
+    });
+
+    // Update categories based on selected department
+    departmentSelect.addEventListener("change", () => {
+      const selectedCollege = collegeSelect.value;
+      const selectedDept = departmentSelect.value;
+
+      const categories = [
+        ...new Set(cetData
+          .filter(item =>
+            item.College === selectedCollege &&
+            item.Department === selectedDept)
+          .map(item => item.Category))
+      ];
+
+      categorySelect.innerHTML = "";
+      categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        categorySelect.appendChild(option);
+      });
+    });
+
+    // Show cutoff
+    function showCutoff() {
+      const selectedCollege = collegeSelect.value;
+      const selectedDept = departmentSelect.value;
+      const selectedCategory = categorySelect.value;
+
+      const result = cetData.find(item =>
+        item.College === selectedCollege &&
+        item.Department === selectedDept &&
+        item.Category === selectedCategory
+      );
+
+      const resultDiv = document.getElementById("result");
+      if (result) {
+        resultDiv.textContent = `Cutoff Rank: ${result.Cutoff}`;
+      } else {
+        resultDiv.textContent = "No data found for the selected combination.";
+      }
+    }
+
+    // Trigger initial population
+    collegeSelect.dispatchEvent(new Event("change"));
+  </script>
+
+</body>
+</html>
